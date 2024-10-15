@@ -1,0 +1,45 @@
+# PART A - ENERGY MINIMIZATION
+
+
+# 1) Initialization
+units real
+atom_style full
+
+bond_style     harmonic
+angle_style    harmonic
+dihedral_style opls
+improper_style cvff
+
+
+pair_style lj/cut/coul/long 10
+
+kspace_style pppm 1e-6
+
+read_data OCCO_10k_STABLE.data
+
+replicate 2 1 1 bbox
+
+
+timestep 0.1
+
+velocity all create 10 42
+
+dump atom all atom 100 OCCO_10k_out.atom
+
+fix 1 all nve
+
+fix recenter all recenter INIT INIT INIT
+
+compute msd all msd
+fix msd all ave/time 2000 1 2000 c_msd file msd.msd mode vector
+
+thermo_style custom step temp press etotal density evdwl ecoul epair eangle edihed eimp emol elong etail enthalpy ecouple econserve ebond
+thermo 100
+
+run 100000
+
+write_data OCCO_10k_out.data
+
+
+
+
